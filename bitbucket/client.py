@@ -132,7 +132,22 @@ class Client(object):
         Returns:
 
         """
-        return self._post('2.0/repositories/{}/{}/issues'.format(self.username, repository_slug), data=data, params=params)
+        return self._post('2.0/repositories/{}/{}/issues'.format(self.username, repository_slug), data=data,
+                          params=params)
+
+    def get_issue(self, repository_slug, issue_id, params=None):
+        """Returns the specified issue.
+
+        Args:
+            repository_slug:
+            issue_id:
+            params:
+
+        Returns:
+
+        """
+        return self._get('2.0/repositories/{}/{}/issues/{}'.format(self.username, repository_slug, issue_id),
+                         params=params)
 
     def get_issues(self, repository_slug, params=None):
         """Returns the issues in the issue tracker.
@@ -146,14 +161,38 @@ class Client(object):
         """
         return self._get('2.0/repositories/{}/{}/issues'.format(self.username, repository_slug), params=params)
 
-    def create_webhook(self, repository_slug, data, params=None):
-        """Updates the specified webhook subscription.
+    def delete_issue(self, repository_slug, issue_id, params=None):
+        """Deletes the specified issue. This requires write access to the repository.
 
-        The following properties can be mutated:
-        description
-        url
-        active
-        events
+        Args:
+            repository_slug:
+            issue_id:
+            params:
+
+        Returns:
+
+        """
+        return self._delete('2.0/repositories/{}/{}/issues/{}'.format(self.username, repository_slug, issue_id),
+                            params=params)
+
+    def create_webhook(self, repository_slug, data, params=None):
+        """Creates a new webhook on the specified repository.
+
+        Example:
+            {
+              "description": "Webhook Description",
+              "url": "https://example.com/",
+              "active": true,
+              "events": [
+                "repo:push",
+                "issue:created",
+                "issue:updated"
+              ]
+            }'
+
+        Note that this call requires the webhook scope, as well as any scope that applies to the events
+        that the webhook subscribes to. In the example above that means: webhook, repository and issue.
+        Also note that the url must properly resolve and cannot be an internal, non-routed address.
 
         Args:
             repository_slug:
@@ -163,7 +202,8 @@ class Client(object):
         Returns:
 
         """
-        return self._post('2.0/repositories/{}/{}/hooks'.format(self.username, repository_slug), data=data, params=params)
+        return self._post('2.0/repositories/{}/{}/hooks'.format(self.username, repository_slug), data=data,
+                          params=params)
 
     def get_webhook(self, repository_slug, webhook_uid, params=None):
         """Returns the webhook with the specified id installed on the specified repository.
@@ -178,6 +218,18 @@ class Client(object):
         """
         return self._get('2.0/repositories/{}/{}/hooks/{}'.format(self.username, repository_slug, webhook_uid),
                          params=params)
+
+    def get_webhooks(self, repository_slug, params=None):
+        """Returns a paginated list of webhooks installed on this repository.
+
+        Args:
+            repository_slug:
+            params:
+
+        Returns:
+
+        """
+        return self._get('2.0/repositories/{}/{}/hooks'.format(self.username, repository_slug), params=params)
 
     def delete_webhook(self, repository_slug, webhook_uid, params=None):
         """Deletes the specified webhook subscription from the given repository.
