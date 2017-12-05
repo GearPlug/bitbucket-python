@@ -116,7 +116,37 @@ class Client(object):
         """
         return self._get('2.0/repositories/{}/{}/versions'.format(self.username, repository_slug), params=params)
 
-    def create_webhook(self, repository_slug, params=None):
+    def create_issue(self, repository_slug, data, params=None):
+        """Creates a new issue.
+
+        This call requires authentication. Private repositories or private issue trackers require
+        the caller to authenticate with an account that has appropriate authorisation.
+
+        The authenticated user is used for the issue's reporter field.
+
+        Args:
+            repository_slug:
+            data:
+            params:
+
+        Returns:
+
+        """
+        return self._post('2.0/repositories/{}/{}/issues'.format(self.username, repository_slug), data=data, params=params)
+
+    def get_issues(self, repository_slug, params=None):
+        """Returns the issues in the issue tracker.
+
+        Args:
+            repository_slug:
+            params:
+
+        Returns:
+
+        """
+        return self._get('2.0/repositories/{}/{}/issues'.format(self.username, repository_slug), params=params)
+
+    def create_webhook(self, repository_slug, data, params=None):
         """Updates the specified webhook subscription.
 
         The following properties can be mutated:
@@ -127,12 +157,13 @@ class Client(object):
 
         Args:
             repository_slug:
+            data:
             params:
 
         Returns:
 
         """
-        return self._put('2.0/repositories/{}/{}/hooks'.format(self.username, repository_slug), params=params)
+        return self._post('2.0/repositories/{}/{}/hooks'.format(self.username, repository_slug), data=data, params=params)
 
     def get_webhook(self, repository_slug, webhook_uid, params=None):
         """Returns the webhook with the specified id installed on the specified repository.
