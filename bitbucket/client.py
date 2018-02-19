@@ -188,7 +188,7 @@ class Client(object):
                 "issue:created",
                 "issue:updated"
               ]
-            }'
+            }
 
         Note that this call requires the webhook scope, as well as any scope that applies to the events
         that the webhook subscribes to. In the example above that means: webhook, repository and issue.
@@ -263,15 +263,18 @@ class Client(object):
 
     def _parse(self, response):
         status_code = response.status_code
-        if status_code == 200 or status_code == 201:
-            return response.json()
+        if 'application/json' in response.headers['Content-Type']:
+            r = response.json()
+        else:
+            r = response.text
+        if status_code in (200, 201):
+            return r
         if status_code == 204:
             return None
         message = None
         try:
-            _json = response.json()
-            if 'errorMessages' in _json:
-                message = _json['errorMessages']
+            if 'errorMessages' in r:
+                message = r['errorMessages']
         except Exception:
             message = 'No error message.'
         if status_code == 400:
