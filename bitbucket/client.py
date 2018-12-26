@@ -1,4 +1,5 @@
 import requests
+
 from bitbucket.exceptions import UnknownError, InvalidIDError, NotFoundIDError, NotAuthenticatedError, PermissionError
 
 
@@ -115,6 +116,37 @@ class Client(object):
 
         """
         return self._get('2.0/repositories/{}/{}/versions'.format(self.username, repository_slug), params=params)
+
+    def get_repository_source_code(self, repository_slug, params=None):
+        """Returns data about the source code of given repository.
+
+        Args:
+            repository_slug:
+            params:
+
+        Returns:
+
+        """
+        return self._get('2.0/repositories/{}/{}/src'.format(self.username, repository_slug), params=params)
+
+    def get_repository_commit_path_source_code(self, repository_slug, commit_hash, path, params=None):
+        """Returns source code of given path at specified commit_hash of given repository.
+
+        Args:
+            repository_slug:
+            commit_hash:
+            path:
+            params:
+
+        Returns:
+
+        """
+        return self._get('2.0/repositories/{}/{}/src/{}/{}'.format(
+            self.username,
+            repository_slug,
+            commit_hash,
+            path
+        ), params=params)
 
     def create_issue(self, repository_slug, data, params=None):
         """Creates a new issue.
