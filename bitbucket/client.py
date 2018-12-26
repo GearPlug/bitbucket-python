@@ -5,12 +5,25 @@ from bitbucket.exceptions import UnknownError, InvalidIDError, NotFoundIDError, 
 class Client(object):
     BASE_URL = 'https://api.bitbucket.org/'
 
-    def __init__(self, user, password):
+    def __init__(self, user, password, owner=None):        
+        """Initial session with user/password, and setup repository owner 
+
+        Args:
+            params:
+
+        Returns:
+
+        """
+
         self.user = user
         self.password = password
 
         user_data = self.get_user()
-        self.username = user_data.get('username')
+
+        # for shared repo, set baseURL to owner
+        if owner is None :
+            owner = user_data.get('username')
+        self.username = owner
 
     def get_user(self, params=None):
         """Returns the currently logged in user.
