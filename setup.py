@@ -7,7 +7,7 @@ def read(fname):
 
 
 setup(name='bitbucket-python',
-      version='0.2.1',
+      version='0.2.2',
       description='API wrapper for Bitbucket written in Python',
       long_description=read('README.md'),
       url='https://github.com/GearPlug/bitbucket-python',
