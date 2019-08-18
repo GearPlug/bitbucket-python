@@ -82,6 +82,29 @@ class Client(object):
         """
         return self._get('2.0/repositories/{}/{}'.format(self.username, repository_slug), params=params)
 
+    def post_repository(self, params=None, data=None, name=None, team=None):
+        """Creates a new repository.
+
+        Example:
+            {
+              "scm": "git",
+              "description": "Repository Description",
+              "is_private": boolean,
+              "project": [
+                "key": "Project key"
+              ]
+            }
+
+        Args:
+            data:
+            params:
+            Name: 
+            team:
+        Returns: Repository
+        """
+        return self._post('2.0/repositories/{}/{}'.format(team, name), params, data)
+
+    
     def get_repository_branches(self, repository_slug, params=None):
         return self._get('2.0/repositories/{}/{}/refs/branches'.format(self.username, repository_slug), params=params)
 
