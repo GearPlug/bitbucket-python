@@ -1,9 +1,13 @@
-bitbucket-python is an API wrapper for Bitbucket written in Python
+gitbucket is an API wrapper for Bitbucket written in Python with added features like Bitbucket pipelines while maintaining the simplicity of the source-repo.
+It was forked from (GearPlug/bitbucket-python)[https://github.com/GearPlug/bitbucket-python]
 
 ## Installing
 ```
-pip install bitbucket-python
+pip install pygitbucket
 ```
+
+## TODO
+- [ ] Add Bitbucket Pipelines support
 
 ## Usage
 ```
