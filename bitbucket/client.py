@@ -6,7 +6,7 @@ from bitbucket.exceptions import UnknownError, InvalidIDError, NotFoundIDError, 
 class Client(object):
     BASE_URL = 'https://api.bitbucket.org/'
 
-    def __init__(self, user, password, owner=None):        
+    def __init__(self, user:str, password:str, owner=None):        
         """Initial session with user/password, and setup repository owner 
 
         Args:
