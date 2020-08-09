@@ -1,0 +1,32 @@
+[build-system]
+requires = ["flit"]
+build-backend = "flit.buildapi"
+
+[tool.flit.metadata]
+module = "pygitbucket"
+author = "Edison Abahurire"
+author-email = "abahedison@gmail.com"
+home-page = "https://github.com/SimiCode/pygitbucket"
+requires=[
+    "requests",
+]
+requires-python=">=3.6"
+description-file="README.md"
+classifiers=[
+    "Intended Audience :: Developers",
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    'Programming Language :: Python :: Implementation :: CPython',
+    "License :: OSI Approved :: GPL License",
+]
+keywords="bitbucket api python"
+
+[tool.flit.metadata.urls]
+Bug-Tracker="https://github.com/SimiCode/pygitbucket/issues"
+Documentation="https://github.com/SimiCode/pygitbucket/README.md"
+Source-Code="https://github.com/SimiCode/pygitbucket/bitbucket"
