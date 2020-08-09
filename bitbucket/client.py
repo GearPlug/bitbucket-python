@@ -87,6 +87,19 @@ class Client(object):
         """
         return self._get('2.0/repositories/{}/{}'.format(self.username, repository_slug), params=params)
 
+    def get_repository_pipelines(self, repository_slug, page=None, params=None):
+        """Returns the object describing this repository's pipelines.
+
+        Args:
+            repository_slug:
+            params:
+
+        Returns:
+
+        """
+        page_num = str(page) if page else '1'
+        return self._get('2.0/repositories/{}/{}/pipelines/?page={}'.format(self.workspace, repository_slug, page_num), params=params)
+
     def get_repository_branches(self, repository_slug, params=None):
         return self._get('2.0/repositories/{}/{}/refs/branches'.format(self.username, repository_slug), params=params)
 
