@@ -3,7 +3,7 @@ import requests
 from bitbucket.exceptions import UnknownError, InvalidIDError, NotFoundIDError, NotAuthenticatedError, PermissionError
 
 
-class Client(object):
+class Client:
     BASE_URL = 'https://api.bitbucket.org/'
 
     def __init__(self, user:str, password:str, owner=None):        
@@ -55,7 +55,7 @@ class Client(object):
         Returns:
 
         """
-        return self._get('1.0/privileges/{}'.format(self.username), params=params)
+        return self._get('1.0/privileges/{}'.format(self.workspace), params=params)
 
     def get_repositories(self, params=None):
         """Returns a paginated list of all repositories owned by the specified account or UUID.
@@ -73,7 +73,7 @@ class Client(object):
         Returns:
 
         """
-        return self._get('2.0/repositories/{}'.format(self.username), params=params)
+        return self._get('2.0/repositories/{}'.format(self.workspace), params=params)
 
     def get_repository(self, repository_slug, params=None):
         """Returns the object describing this repository.
@@ -85,7 +85,7 @@ class Client(object):
         Returns:
 
         """
-        return self._get('2.0/repositories/{}/{}'.format(self.username, repository_slug), params=params)
+        return self._get('2.0/repositories/{}/{}'.format(self.workspace, repository_slug), params=params)
 
     def get_repository_pipelines(self, repository_slug, page=None, params=None):
         """Returns the object describing this repository's pipelines.
@@ -101,10 +101,10 @@ class Client(object):
         return self._get('2.0/repositories/{}/{}/pipelines/?page={}'.format(self.workspace, repository_slug, page_num), params=params)
 
     def get_repository_branches(self, repository_slug, params=None):
-        return self._get('2.0/repositories/{}/{}/refs/branches'.format(self.username, repository_slug), params=params)
+        return self._get('2.0/repositories/{}/{}/refs/branches'.format(self.workspace, repository_slug), params=params)
 
     def get_repository_tags(self, repository_slug, params=None):
-        return self._get('2.0/repositories/{}/{}/refs/tags'.format(self.username, repository_slug), params=params)
+        return self._get('2.0/repositories/{}/{}/refs/tags'.format(self.workspace, repository_slug), params=params)
 
     def get_repository_components(self, repository_slug, params=None):
         """Returns the components that have been defined in the issue tracker.
@@ -118,7 +118,7 @@ class Client(object):
         Returns:
 
         """
-        return self._get('2.0/repositories/{}/{}/components'.format(self.username, repository_slug), params=params)
+        return self._get('2.0/repositories/{}/{}/components'.format(self.workspace, repository_slug), params=params)
 
     def get_repository_milestones(self, repository_slug, params=None):
         """Returns the milestones that have been defined in the issue tracker.
@@ -132,7 +132,7 @@ class Client(object):
         Returns:
 
         """
-        return self._get('2.0/repositories/{}/{}/milestones'.format(self.username, repository_slug), params=params)
+        return self._get('2.0/repositories/{}/{}/milestones'.format(self.workspace, repository_slug), params=params)
 
     def get_repository_versions(self, repository_slug, params=None):
         """Returns the versions that have been defined in the issue tracker.
@@ -146,7 +146,7 @@ class Client(object):
         Returns:
 
         """
-        return self._get('2.0/repositories/{}/{}/versions'.format(self.username, repository_slug), params=params)
+        return self._get('2.0/repositories/{}/{}/versions'.format(self.workspace, repository_slug), params=params)
 
     def get_repository_source_code(self, repository_slug, params=None):
         """Returns data about the source code of given repository.
@@ -158,7 +158,7 @@ class Client(object):
         Returns:
 
         """
-        return self._get('2.0/repositories/{}/{}/src'.format(self.username, repository_slug), params=params)
+        return self._get('2.0/repositories/{}/{}/src'.format(self.workspace, repository_slug), params=params)
 
     def get_repository_commit_path_source_code(self, repository_slug, commit_hash, path, params=None):
         """Returns source code of given path at specified commit_hash of given repository.
@@ -173,7 +173,7 @@ class Client(object):
 
         """
         return self._get('2.0/repositories/{}/{}/src/{}/{}'.format(
-            self.username,
+            self.workspace,
             repository_slug,
             commit_hash,
             path
@@ -250,19 +250,13 @@ class Client(object):
 
         Args:
             repository_slug:
-        data = {
-            "title": title,
-            "content": {
-                "raw": description
-            }
-        }
-        return self._post('2.0/repositories/{}/{}/issues'.format(self.workspace, repository_slug), data=data,
+            issue_id:
             params:
 
         Returns:
 
         """
-        return self._get('2.0/repositories/{}/{}/issues/{}'.format(self.username, repository_slug, issue_id),
+        return self._get('2.0/repositories/{}/{}/issues/{}'.format(self.workspace, repository_slug, issue_id),
                          params=params)
 
     def get_issues(self, repository_slug, params=None):
@@ -275,7 +269,7 @@ class Client(object):
         Returns:
 
         """
-        return self._get('2.0/repositories/{}/{}/issues'.format(self.username, repository_slug), params=params)
+        return self._get('2.0/repositories/{}/{}/issues'.format(self.workspace, repository_slug), params=params)
 
     def delete_issue(self, repository_slug, issue_id, params=None):
         """Deletes the specified issue. This requires write access to the repository.
@@ -288,7 +282,7 @@ class Client(object):
         Returns:
 
         """
-        return self._delete('2.0/repositories/{}/{}/issues/{}'.format(self.username, repository_slug, issue_id),
+        return self._delete('2.0/repositories/{}/{}/issues/{}'.format(self.workspace, repository_slug, issue_id),
                             params=params)
 
     def create_webhook(self, repository_slug, data, params=None):
@@ -318,7 +312,7 @@ class Client(object):
         Returns:
 
         """
-        return self._post('2.0/repositories/{}/{}/hooks'.format(self.username, repository_slug), data=data,
+        return self._post('2.0/repositories/{}/{}/hooks'.format(self.workspace, repository_slug), data=data,
                           params=params)
 
     def get_webhook(self, repository_slug, webhook_uid, params=None):
@@ -332,7 +326,7 @@ class Client(object):
         Returns:
 
         """
-        return self._get('2.0/repositories/{}/{}/hooks/{}'.format(self.username, repository_slug, webhook_uid),
+        return self._get('2.0/repositories/{}/{}/hooks/{}'.format(self.workspace, repository_slug, webhook_uid),
                          params=params)
 
     def get_webhooks(self, repository_slug, params=None):
@@ -345,7 +339,7 @@ class Client(object):
         Returns:
 
         """
-        return self._get('2.0/repositories/{}/{}/hooks'.format(self.username, repository_slug), params=params)
+        return self._get('2.0/repositories/{}/{}/hooks'.format(self.workspace, repository_slug), params=params)
 
     def delete_webhook(self, repository_slug, webhook_uid, params=None):
         """Deletes the specified webhook subscription from the given repository.
@@ -358,7 +352,7 @@ class Client(object):
         Returns:
 
         """
-        return self._delete('2.0/repositories/{}/{}/hooks/{}'.format(self.username, repository_slug, webhook_uid),
+        return self._delete('2.0/repositories/{}/{}/hooks/{}'.format(self.workspace, repository_slug, webhook_uid),
                             params=params)
 
     def _get(self, endpoint, params=None):
