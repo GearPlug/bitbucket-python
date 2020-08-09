@@ -179,6 +179,39 @@ class Client(object):
             path
         ), params=params)
 
+    def trigger_pipeline(self, repository_slug, branch_name, params=None):
+        """Triggers the pipeline for a branch of the repo.
+
+        This call requires authentication. Private repositories or private issue trackers require
+        the caller to authenticate with an account that has appropriate authorisation.
+
+        Args:
+            repository_slug:
+            branch_name: name of repo branch being deployed
+            data:
+            params:
+
+        The post data should be in the format:
+            {
+                "target": {
+                "ref_type": "branch",
+                "type": "pipeline_ref_target",
+                "ref_name": "branch_name"
+                }
+            }
+        Returns:
+
+        """
+        data = {
+            "target": {
+            "ref_type": "branch",
+            "type": "pipeline_ref_target",
+            "ref_name": branch_name
+            }
+        }
+        return self._post('2.0/repositories/{}/{}/pipelines/'.format(self.workspace, repository_slug), data=data,
+                          params=params)
+
     def create_issue(self, repository_slug, title, description='', params=None):
         """Creates a new issue.
 
