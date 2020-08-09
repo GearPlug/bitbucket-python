@@ -179,7 +179,7 @@ class Client(object):
             path
         ), params=params)
 
-    def create_issue(self, repository_slug, data, params=None):
+    def create_issue(self, repository_slug, title, description='', params=None):
         """Creates a new issue.
 
         This call requires authentication. Private repositories or private issue trackers require
@@ -192,10 +192,24 @@ class Client(object):
             data:
             params:
 
+        The post data should be in the format:
+            {
+                "title":"title of the issue",
+                "content":{
+                    "raw":"this should be the description"
+                }
+            }
+
         Returns:
 
         """
-        return self._post('2.0/repositories/{}/{}/issues'.format(self.username, repository_slug), data=data,
+        data = {
+            "title": title,
+            "content": {
+                "raw": description
+            }
+        }
+        return self._post('2.0/repositories/{}/{}/issues'.format(self.workspace, repository_slug), data=data,
                           params=params)
 
     def get_issue(self, repository_slug, issue_id, params=None):
@@ -203,7 +217,13 @@ class Client(object):
 
         Args:
             repository_slug:
-            issue_id:
+        data = {
+            "title": title,
+            "content": {
+                "raw": description
+            }
+        }
+        return self._post('2.0/repositories/{}/{}/issues'.format(self.workspace, repository_slug), data=data,
             params:
 
         Returns:
