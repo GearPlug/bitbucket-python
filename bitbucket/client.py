@@ -17,6 +17,7 @@ class Client(object):
         """
 
         self.user = user
+        self.workspace = user
         self.password = password
 
         user_data = self.get_user()
@@ -36,6 +37,10 @@ class Client(object):
 
         """
         return self._get('2.0/user', params=params)
+
+    def set_workspaces(self, org_name, params=None):
+        """Sets the organization to which the repos belong."""
+        self.workspace = org_name
 
     def get_privileges(self, params=None):
         """Gets a list of all the privilege across all an account's repositories.
