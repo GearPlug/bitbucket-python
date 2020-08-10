@@ -50,6 +50,16 @@ Get tags for repository
 response = client.get_repository_tags('REPOSITORY_SLUG')
 ```
 
+Get pipelines for repository
+```
+response = client.get_repository_pipelines('REPOSITORY_SLUG')
+```
+
+Get last 10 pipelines for repository
+```
+response = client.get_latest_pipelines('REPOSITORY_SLUG')
+```
+
 Get components for repository
 ```
 response = client.get_repository_components('REPOSITORY_SLUG')
@@ -67,8 +77,12 @@ response = client.get_repository_versions('REPOSITORY_SLUG')
 
 Create issue
 ```
-data = {..DATA..}
-response = client.create_issue('REPOSITORY_SLUG', data)
+response = client.create_issue(repository_slug, title, description)
+```
+
+trigger pipeline deployment for branch
+```
+response = client.trigger_pipeline(repository_slug, branch_name)
 ```
 
 Get all issues
