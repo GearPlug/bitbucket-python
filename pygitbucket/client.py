@@ -1,9 +1,7 @@
-__version__ = "2020.8.9"
-
 import math
 import requests
 
-from bitbucket.exceptions import UnknownError, InvalidIDError, NotFoundIDError, NotAuthenticatedError, PermissionError
+from pygitbucket.exceptions import UnknownError, InvalidIDError, NotFoundIDError, NotAuthenticatedError, PermissionError
 
 
 class Client:

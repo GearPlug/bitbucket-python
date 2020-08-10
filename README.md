@@ -6,12 +6,12 @@ It was forked from (GearPlug/bitbucket-python)[https://github.com/GearPlug/bitbu
 pip install pygitbucket
 ```
 
-## TODO
-- [ ] Add Bitbucket Pipelines support
+## New Features added
+- [x] Added Bitbucket Pipelines support
 
 ## Usage
 ```
-from bitbucket.client import Client
+from pygitbucket.client import Client
 
 client = Client('EMAIL', 'PASSWORD') 
 

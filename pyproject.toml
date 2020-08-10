@@ -22,9 +22,9 @@ classifiers=[
     "Programming Language :: Python :: 3.9",
     "Topic :: Software Development :: Libraries :: Python Modules",
     'Programming Language :: Python :: Implementation :: CPython',
-    "License :: OSI Approved :: GPL License",
+    'License :: OSI Approved :: MIT License',
 ]
-keywords="bitbucket api python"
+keywords="bitbucket api python pygitbucket"
 
 [tool.flit.metadata.urls]
 Bug-Tracker="https://github.com/SimiCode/pygitbucket/issues"
