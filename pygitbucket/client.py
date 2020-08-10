@@ -125,7 +125,7 @@ class Client:
             self.get_repository_pipelines(repository_slug, pages)["values"]
             + self.get_repository_pipelines(repository_slug, pages - 1)["values"]
         )
-        return latest_pipelines
+        return latest_pipelines[-10:]
 
     def get_repository_branches(self, repository_slug, params=None):
         return self._get(
