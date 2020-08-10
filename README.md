@@ -1,5 +1,5 @@
 gitbucket is an API wrapper for Bitbucket written in Python with added features like Bitbucket pipelines while maintaining the simplicity of the source-repo.
-It was forked from (GearPlug/bitbucket-python)[https://github.com/GearPlug/bitbucket-python]
+It was forked from [GearPlug/bitbucket-python](https://github.com/GearPlug/bitbucket-python)
 
 ## Installing
 ```
