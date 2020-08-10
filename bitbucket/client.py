@@ -1,3 +1,6 @@
+__version__ = "2020.8.9"
+
+import math
 import requests
 
 from bitbucket.exceptions import UnknownError, InvalidIDError, NotFoundIDError, NotAuthenticatedError, PermissionError
@@ -92,6 +95,7 @@ class Client:
 
         Args:
             repository_slug:
+            page: page of the pipelines data
             params:
 
         Returns:
@@ -99,6 +103,25 @@ class Client:
         """
         page_num = str(page) if page else '1'
         return self._get('2.0/repositories/{}/{}/pipelines/?page={}'.format(self.workspace, repository_slug, page_num), params=params)
+
+    def get_latest_pipelines(self, repository_slug, params=None):
+        """Returns the object describing this repository's latest pipelines.
+
+        Args:
+            repository_slug:
+            params:
+
+        Returns:
+
+        """
+        default_response = self.get_repository_pipelines(repository_slug)
+        num_pipelines = default_response['size']
+        pages = math.ceil(num_pipelines/10)
+        latest_pipelines = (
+            self.get_repository_pipelines(repository_slug, pages)['values'] +
+            self.get_repository_pipelines(repository_slug, pages-1)['values']
+        )
+        return latest_pipelines
 
     def get_repository_branches(self, repository_slug, params=None):
         return self._get('2.0/repositories/{}/{}/refs/branches'.format(self.workspace, repository_slug), params=params)
