@@ -1,13 +1,19 @@
 import math
 import requests
 
-from pygitbucket.exceptions import UnknownError, InvalidIDError, NotFoundIDError, NotAuthenticatedError, PermissionError
+from pygitbucket.exceptions import (
+    UnknownError,
+    InvalidIDError,
+    NotFoundIDError,
+    NotAuthenticatedError,
+    PermissionError,
+)
 
 
 class Client:
-    BASE_URL = 'https://api.bitbucket.org/'
+    BASE_URL = "https://api.bitbucket.org/"
 
-    def __init__(self, user:str, password:str, owner=None):        
+    def __init__(self, user: str, password: str, owner=None):
         """Initial session with user/password, and setup repository owner 
 
         Args:
@@ -22,8 +28,8 @@ class Client:
         user_data = self.get_user()
 
         # for shared repo, set baseURL to owner
-        if owner is None :
-            owner = user_data.get('username')
+        if owner is None:
+            owner = user_data.get("username")
         self.username = owner
 
     def get_user(self, params=None):
@@ -35,7 +41,7 @@ class Client:
         Returns:
 
         """
-        return self._get('2.0/user', params=params)
+        return self._get("2.0/user", params=params)
 
     def get_privileges(self, params=None):
         """Gets a list of all the privilege across all an account's repositories.
@@ -50,7 +56,7 @@ class Client:
         Returns:
 
         """
-        return self._get(f'1.0/privileges/{self.username}', params=params)
+        return self._get(f"1.0/privileges/{self.username}", params=params)
 
     def get_repositories(self, params=None):
         """Returns a paginated list of all repositories owned by the specified account or UUID.
@@ -68,7 +74,7 @@ class Client:
         Returns:
 
         """
-        return self._get(f'2.0/repositories/{self.username}', params=params)
+        return self._get(f"2.0/repositories/{self.username}", params=params)
 
     def get_repository(self, repository_slug, params=None):
         """Returns the object describing this repository.
@@ -80,7 +86,10 @@ class Client:
         Returns:
 
         """
-        return self._get(f'2.0/repositories/{self.username}/{repository_slug}', params=params)
+        return self._get(
+            f"2.0/repositories/{self.username}/{repository_slug}", 
+            params=params
+        )
 
     def get_repository_pipelines(self, repository_slug, page=None, params=None):
         """Returns the object describing this repository's pipelines.
@@ -93,8 +102,11 @@ class Client:
         Returns:
 
         """
-        page_num = str(page) if page else '1'
-        return self._get(f'2.0/repositories/{self.username}/{repository_slug}/pipelines/?page={page_num}', params=params)
+        page_num = str(page) if page else "1"
+        return self._get(
+            f"2.0/repositories/{self.username}/{repository_slug}/pipelines/?page={page_num}",
+            params=params,
+        )
 
     def get_latest_pipelines(self, repository_slug, params=None):
         """Returns the object describing this repository's latest pipelines.
@@ -107,19 +119,25 @@ class Client:
 
         """
         default_response = self.get_repository_pipelines(repository_slug)
-        num_pipelines = default_response['size']
-        pages = math.ceil(num_pipelines/10)
+        num_pipelines = default_response["size"]
+        pages = math.ceil(num_pipelines / 10)
         latest_pipelines = (
-            self.get_repository_pipelines(repository_slug, pages)['values'] +
-            self.get_repository_pipelines(repository_slug, pages-1)['values']
+            self.get_repository_pipelines(repository_slug, pages)["values"]
+            + self.get_repository_pipelines(repository_slug, pages - 1)["values"]
         )
         return latest_pipelines
 
     def get_repository_branches(self, repository_slug, params=None):
-        return self._get(f'2.0/repositories/{self.username}/{repository_slug}/refs/branches', params=params)
+        return self._get(
+            f"2.0/repositories/{self.username}/{repository_slug}/refs/branches",
+            params=params,
+        )
 
     def get_repository_tags(self, repository_slug, params=None):
-        return self._get(f'2.0/repositories/{self.username}/{repository_slug}/refs/tags', params=params)
+        return self._get(
+            f"2.0/repositories/{self.username}/{repository_slug}/refs/tags",
+            params=params,
+        )
 
     def get_repository_components(self, repository_slug, params=None):
         """Returns the components that have been defined in the issue tracker.
@@ -133,7 +151,10 @@ class Client:
         Returns:
 
         """
-        return self._get(f'2.0/repositories/{self.username}/{repository_slug}/components', params=params)
+        return self._get(
+            f"2.0/repositories/{self.username}/{repository_slug}/components",
+            params=params,
+        )
 
     def get_repository_milestones(self, repository_slug, params=None):
         """Returns the milestones that have been defined in the issue tracker.
@@ -147,7 +168,10 @@ class Client:
         Returns:
 
         """
-        return self._get(f'2.0/repositories/{self.username}/{repository_slug}/milestones', params=params)
+        return self._get(
+            f"2.0/repositories/{self.username}/{repository_slug}/milestones",
+            params=params,
+        )
 
     def get_repository_versions(self, repository_slug, params=None):
         """Returns the versions that have been defined in the issue tracker.
@@ -161,7 +185,10 @@ class Client:
         Returns:
 
         """
-        return self._get(f'2.0/repositories/{self.username}/{repository_slug}/versions', params=params)
+        return self._get(
+            f"2.0/repositories/{self.username}/{repository_slug}/versions",
+            params=params,
+        )
 
     def get_repository_source_code(self, repository_slug, params=None):
         """Returns data about the source code of given repository.
@@ -173,9 +200,14 @@ class Client:
         Returns:
 
         """
-        return self._get(f'2.0/repositories/{self.username}/{repository_slug}/src', params=params)
+        return self._get(
+            f"2.0/repositories/{self.username}/{repository_slug}/src", 
+            params=params
+        )
 
-    def get_repository_commit_path_source_code(self, repository_slug, commit_hash, path, params=None):
+    def get_repository_commit_path_source_code(
+        self, repository_slug, commit_hash, path, params=None
+    ):
         """Returns source code of given path at specified commit_hash of given repository.
 
         Args:
@@ -187,7 +219,10 @@ class Client:
         Returns:
 
         """
-        return self._get(f'2.0/repositories/{self.username}/{repository_slug}/src/{commit_hash}/{path}', params=params)
+        return self._get(
+            f"2.0/repositories/{self.username}/{repository_slug}/src/{commit_hash}/{path}",
+            params=params,
+        )
 
     def trigger_pipeline(self, repository_slug, branch_name, params=None):
         """Triggers the pipeline for a branch of the repo.
@@ -214,15 +249,18 @@ class Client:
         """
         data = {
             "target": {
-            "ref_type": "branch",
-            "type": "pipeline_ref_target",
-            "ref_name": branch_name
+                "ref_type": "branch",
+                "type": "pipeline_ref_target",
+                "ref_name": branch_name,
             }
         }
-        return self._post(f'2.0/repositories/{self.username}/{repository_slug}/pipelines/', data=data,
-                          params=params)
+        return self._post(
+            f"2.0/repositories/{self.username}/{repository_slug}/pipelines/",
+            data=data,
+            params=params,
+        )
 
-    def create_issue(self, repository_slug, title, description='', params=None):
+    def create_issue(self, repository_slug, title, description="", params=None):
         """Creates a new issue.
 
         This call requires authentication. Private repositories or private issue trackers require
@@ -246,14 +284,12 @@ class Client:
         Returns:
 
         """
-        data = {
-            "title": title,
-            "content": {
-                "raw": description
-            }
-        }
-        return self._post(f'2.0/repositories/{self.username}/{repository_slug}/issues', data=data,
-                          params=params)
+        data = {"title": title, "content": {"raw": description}}
+        return self._post(
+            f"2.0/repositories/{self.username}/{repository_slug}/issues",
+            data=data,
+            params=params,
+        )
 
     def get_issue(self, repository_slug, issue_id, params=None):
         """Returns the specified issue.
@@ -266,8 +302,10 @@ class Client:
         Returns:
 
         """
-        return self._get(f'2.0/repositories/{self.username}/{repository_slug}/issues/{issue_id}',
-                         params=params)
+        return self._get(
+            f"2.0/repositories/{self.username}/{repository_slug}/issues/{issue_id}",
+            params=params,
+        )
 
     def get_issues(self, repository_slug, params=None):
         """Returns the issues in the issue tracker.
@@ -279,7 +317,10 @@ class Client:
         Returns:
 
         """
-        return self._get(f'2.0/repositories/{self.username}/{repository_slug}/issues', params=params)
+        return self._get(
+            f"2.0/repositories/{self.username}/{repository_slug}/issues", 
+            params=params
+        )
 
     def delete_issue(self, repository_slug, issue_id, params=None):
         """Deletes the specified issue. This requires write access to the repository.
@@ -292,8 +333,10 @@ class Client:
         Returns:
 
         """
-        return self._delete(f'2.0/repositories/{self.username}/{repository_slug}/issues/{issue_id}',
-                            params=params)
+        return self._delete(
+            f"2.0/repositories/{self.username}/{repository_slug}/issues/{issue_id}",
+            params=params,
+        )
 
     def create_webhook(self, repository_slug, data, params=None):
         """Creates a new webhook on the specified repository.
@@ -322,8 +365,11 @@ class Client:
         Returns:
 
         """
-        return self._post(f'2.0/repositories/{self.username}/{repository_slug}/hooks', data=data,
-                          params=params)
+        return self._post(
+            f"2.0/repositories/{self.username}/{repository_slug}/hooks",
+            data=data,
+            params=params,
+        )
 
     def get_webhook(self, repository_slug, webhook_uid, params=None):
         """Returns the webhook with the specified id installed on the specified repository.
@@ -336,8 +382,10 @@ class Client:
         Returns:
 
         """
-        return self._get(f'2.0/repositories/{self.username}/{repository_slug}/hooks/{webhook_uid}',
-                         params=params)
+        return self._get(
+            f"2.0/repositories/{self.username}/{repository_slug}/hooks/{webhook_uid}",
+            params=params,
+        )
 
     def get_webhooks(self, repository_slug, params=None):
         """Returns a paginated list of webhooks installed on this repository.
@@ -349,7 +397,10 @@ class Client:
         Returns:
 
         """
-        return self._get(f'2.0/repositories/{self.username}/{repository_slug}/hooks', params=params)
+        return self._get(
+            f"2.0/repositories/{self.username}/{repository_slug}/hooks", 
+            params=params
+        )
 
     def delete_webhook(self, repository_slug, webhook_uid, params=None):
         """Deletes the specified webhook subscription from the given repository.
@@ -362,28 +413,44 @@ class Client:
         Returns:
 
         """
-        return self._delete(f'2.0/repositories/{self.username}/{repository_slug}/hooks/{webhook_uid}',
-                            params=params)
+        return self._delete(
+            f"2.0/repositories/{self.username}/{repository_slug}/hooks/{webhook_uid}",
+            params=params,
+        )
 
     def _get(self, endpoint, params=None):
-        response = requests.get(self.BASE_URL + endpoint, params=params, auth=(self.user, self.password))
+        response = requests.get(
+            self.BASE_URL + endpoint, params=params, auth=(self.user, self.password)
+        )
         return self._parse(response)
 
     def _post(self, endpoint, params=None, data=None):
-        response = requests.post(self.BASE_URL + endpoint, params=params, json=data, auth=(self.user, self.password))
+        response = requests.post(
+            self.BASE_URL + endpoint,
+            params=params,
+            json=data,
+            auth=(self.user, self.password),
+        )
         return self._parse(response)
 
     def _put(self, endpoint, params=None, data=None):
-        response = requests.put(self.BASE_URL + endpoint, params=params, json=data, auth=(self.user, self.password))
+        response = requests.put(
+            self.BASE_URL + endpoint,
+            params=params,
+            json=data,
+            auth=(self.user, self.password),
+        )
         return self._parse(response)
 
     def _delete(self, endpoint, params=None):
-        response = requests.delete(self.BASE_URL + endpoint, params=params, auth=(self.user, self.password))
+        response = requests.delete(
+            self.BASE_URL + endpoint, params=params, auth=(self.user, self.password)
+        )
         return self._parse(response)
 
     def _parse(self, response):
         status_code = response.status_code
-        if 'application/json' in response.headers['Content-Type']:
+        if "application/json" in response.headers["Content-Type"]:
             r = response.json()
         else:
             r = response.text
@@ -393,10 +460,10 @@ class Client:
             return None
         message = None
         try:
-            if 'errorMessages' in r:
-                message = r['errorMessages']
+            if "errorMessages" in r:
+                message = r["errorMessages"]
         except Exception:
-            message = 'No error message.'
+            message = "No error message."
         if status_code == 400:
             raise InvalidIDError(message)
         if status_code == 401:
