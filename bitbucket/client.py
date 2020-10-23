@@ -82,7 +82,7 @@ class Client(object):
         """
         return self._get('2.0/repositories/{}/{}'.format(self.username, repository_slug), params=params)
 
-    def post_repository(self, params=None, data=None, name=None, team=None):
+    def create_repository(self, params=None, data=None, name=None, team=None):
         """Creates a new repository.
 
         Example:
