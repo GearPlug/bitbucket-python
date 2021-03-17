@@ -6,8 +6,8 @@ from bitbucket.exceptions import UnknownError, InvalidIDError, NotFoundIDError, 
 class Client(object):
     BASE_URL = 'https://api.bitbucket.org/'
 
-    def __init__(self, user, password, owner=None):        
-        """Initial session with user/password, and setup repository owner 
+    def __init__(self, user, password, owner=None):
+        """Initial session with user/password, and setup repository owner
 
         Args:
             params:
@@ -87,6 +87,22 @@ class Client(object):
 
     def get_repository_tags(self, repository_slug, params=None):
         return self._get('2.0/repositories/{}/{}/refs/tags'.format(self.username, repository_slug), params=params)
+
+    def get_repository_commits(self, repository_slug, params=None):
+        """Returns the commits from the repository.
+
+        Params can be used to return commits from a branch like this:
+
+            params={'include': 'branch'}
+
+        Args:
+            repository_slug:
+            params:
+
+        Returns:
+
+        """
+        return self._get('2.0/repositories/{}/{}/commits'.format(self.username, repository_slug), params=params)
 
     def get_repository_components(self, repository_slug, params=None):
         """Returns the components that have been defined in the issue tracker.
