@@ -36,6 +36,11 @@ Get repository
 response = client.get_repository('REPOSITORY_SLUG')
 ```
 
+Post repository
+```
+response = client.create_repository(data, params, repositoryName, teamName)
+```
+
 Get branches for repository
 ```
 response = client.get_repository_branches('REPOSITORY_SLUG')
