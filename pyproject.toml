@@ -10,6 +10,7 @@ packages = [{include = "bitbucket"}]
 [tool.poetry.dependencies]
 python = "^3.7"
 requests = "^2.26.0"
+httpx = "^0.23.0"
 
 
 [build-system]

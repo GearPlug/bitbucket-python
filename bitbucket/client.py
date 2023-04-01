@@ -1,4 +1,4 @@
-import httpx
+import requests
 
 from .base import BaseClient
 
@@ -330,18 +330,18 @@ class Client(BaseClient):
                             params=params)
 
     def _get(self, endpoint, params=None):
-        response = httpx.get(self.BASE_URL + endpoint, params=params, auth=(self.user, self.password))
+        response = requests.get(self.BASE_URL + endpoint, params=params, auth=(self.user, self.password))
         return self.parse(response)
 
     def _post(self, endpoint, params=None, data=None):
-        response = httpx.post(self.BASE_URL + endpoint, params=params, json=data, auth=(self.user, self.password))
+        response = requests.post(self.BASE_URL + endpoint, params=params, json=data, auth=(self.user, self.password))
         return self.parse(response)
 
     def _put(self, endpoint, params=None, data=None):
-        response = httpx.put(self.BASE_URL + endpoint, params=params, json=data, auth=(self.user, self.password))
+        response = requests.put(self.BASE_URL + endpoint, params=params, json=data, auth=(self.user, self.password))
         return self.parse(response)
 
     def _delete(self, endpoint, params=None):
-        response = httpx.delete(self.BASE_URL + endpoint, params=params, auth=(self.user, self.password))
+        response = requests.delete(self.BASE_URL + endpoint, params=params, auth=(self.user, self.password))
         return self.parse(response)
 
