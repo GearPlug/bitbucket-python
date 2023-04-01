@@ -15,7 +15,9 @@ class BaseClient(object):
             return None
         message = None
         try:
-            if 'errorMessages' in r:
+            if type(r) == str:
+                message = r
+            elif 'errorMessages' in r:
                 message = r['errorMessages']
         except Exception:
             message = 'No error message.'
