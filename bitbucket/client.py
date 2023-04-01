@@ -1,10 +1,10 @@
-import requests
+import httpx
 
-from bitbucket.exceptions import UnknownError, InvalidIDError, NotFoundIDError, NotAuthenticatedError, PermissionError
+from .base import BaseClient
 
 
-class Client(object):
-    BASE_URL = 'https://api.bitbucket.org/'
+class Client(BaseClient):
+    
 
     def __init__(self, user, password, owner=None):
         """Initial session with user/password, and setup repository owner
@@ -22,7 +22,7 @@ class Client(object):
         user_data = self.get_user()
 
         # for shared repo, set baseURL to owner
-        if owner is None :
+        if owner is None and user_data is not None:
             owner = user_data.get('username')
         self.username = owner
 
@@ -330,43 +330,18 @@ class Client(object):
                             params=params)
 
     def _get(self, endpoint, params=None):
-        response = requests.get(self.BASE_URL + endpoint, params=params, auth=(self.user, self.password))
-        return self._parse(response)
+        response = httpx.get(self.BASE_URL + endpoint, params=params, auth=(self.user, self.password))
+        return self.parse(response)
 
     def _post(self, endpoint, params=None, data=None):
-        response = requests.post(self.BASE_URL + endpoint, params=params, json=data, auth=(self.user, self.password))
-        return self._parse(response)
+        response = httpx.post(self.BASE_URL + endpoint, params=params, json=data, auth=(self.user, self.password))
+        return self.parse(response)
 
     def _put(self, endpoint, params=None, data=None):
-        response = requests.put(self.BASE_URL + endpoint, params=params, json=data, auth=(self.user, self.password))
-        return self._parse(response)
+        response = httpx.put(self.BASE_URL + endpoint, params=params, json=data, auth=(self.user, self.password))
+        return self.parse(response)
 
     def _delete(self, endpoint, params=None):
-        response = requests.delete(self.BASE_URL + endpoint, params=params, auth=(self.user, self.password))
-        return self._parse(response)
+        response = httpx.delete(self.BASE_URL + endpoint, params=params, auth=(self.user, self.password))
+        return self.parse(response)
 
-    def _parse(self, response):
-        status_code = response.status_code
-        if 'application/json' in response.headers['Content-Type']:
-            r = response.json()
-        else:
-            r = response.text
-        if status_code in (200, 201):
-            return r
-        if status_code == 204:
-            return None
-        message = None
-        try:
-            if 'errorMessages' in r:
-                message = r['errorMessages']
-        except Exception:
-            message = 'No error message.'
-        if status_code == 400:
-            raise InvalidIDError(message)
-        if status_code == 401:
-            raise NotAuthenticatedError(message)
-        if status_code == 403:
-            raise PermissionError(message)
-        if status_code == 404:
-            raise NotFoundIDError(message)
-        raise UnknownError(message)
