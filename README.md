@@ -6,13 +6,21 @@ pip install bitbucket-python
 ```
 
 ## Usage
-```
+
+### Sync client
+
+```python
 from bitbucket.client import Client
+from bitbucket import AsyncClient
 
 client = Client('EMAIL', 'PASSWORD')
 
 # Or to specify owner URL to find repo own by other user
 client = Client('EMAIL', 'PASSWORD', 'Owner')
+
+# Async client
+async with AsyncClient('EMAIL', 'PASSWORD') as client:
+    ...
 
 ```
 
@@ -125,4 +133,6 @@ response = client.delete_webhook('REPOSITORY_SLUG', 'WEBHOOK_ID')
 ```
 
 ## Requirements
+
 - requests
+- [httpx](https://github.com/encode/httpx/)

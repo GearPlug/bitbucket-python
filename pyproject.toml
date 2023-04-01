@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bitbucket-python"
-version = "0.2.4"
+version = "0.3.0"
 description = "API wrapper for Bitbucket written in Python"
 authors = ["Miguel Ferrer <ingferrermiguel@gmail.com>"]
 license = "MIT"
@@ -10,6 +10,7 @@ packages = [{include = "bitbucket"}]
 [tool.poetry.dependencies]
 python = "^3.7"
 requests = "^2.26.0"
+httpx = "^0.23.0"
 
 
 [build-system]
