@@ -134,4 +134,5 @@ response = client.delete_webhook('REPOSITORY_SLUG', 'WEBHOOK_ID')
 
 ## Requirements
 
+- requests
 - [httpx](https://github.com/encode/httpx/)
