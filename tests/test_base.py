@@ -12,97 +12,88 @@ from bitbucket.exceptions import (
 )
 
 
-def test_parse_returns_dict_when_status_code_200():
-    # Arrange
-    response = Mock(status_code=200, headers={"Content-Type": "application/json"})
-    response.json.return_value = {"key": "value"}
-    parser = BaseClient()
+class TestBaseClient:
+    @pytest.fixture
+    def client(self):
+        return BaseClient("", "")
 
-    # Act
-    result = parser.parse(response)
+    def test_parse_returns_dict_when_status_code_200(self, client):
+        # Arrange
+        response = Mock(status_code=200, headers={"Content-Type": "application/json"})
+        response.json.return_value = {"key": "value"}
 
-    # Assert
-    assert result == {"key": "value"}
+        # Act
+        result = client.parse(response)
 
+        # Assert
+        assert result == {"key": "value"}
 
-def test_parse_returns_none_when_status_code_204():
-    # Arrange
-    response = Mock(status_code=204, headers={"Content-Type": "application/json"})
-    parser = BaseClient()
+    def test_parse_returns_none_when_status_code_204(self, client):
+        # Arrange
+        response = Mock(status_code=204, headers={"Content-Type": "application/json"})
 
-    # Act
-    result = parser.parse(response)
+        # Act
+        result = client.parse(response)
 
-    # Assert
-    assert result is None
+        # Assert
+        assert result is None
 
+    def test_parse_raises_InvalidIDError_when_status_code_400(self, client):
+        # Arrange
+        response = Mock(status_code=400, headers={"Content-Type": "application/json"})
+        response.json.return_value = {"error": {"message": "Invalid ID"}}
 
-def test_parse_raises_InvalidIDError_when_status_code_400():
-    # Arrange
-    response = Mock(status_code=400, headers={"Content-Type": "application/json"})
-    response.json.return_value = {"error": {"message": "Invalid ID"}}
+        # Act/Assert
+        with pytest.raises(InvalidIDError, match="Invalid ID"):
+            client.parse(response)
 
-    parser = BaseClient()
+    def test_parse_raises_NotAuthenticatedError_when_status_code_401(self, client):
+        # Arrange
+        response = Mock(
+            status_code=401,
+            headers={"Content-Type": "application/json"},
+        )
+        response.json.return_value = {"error": {"message": "Not authenticated"}}
 
-    # Act/Assert
-    with pytest.raises(InvalidIDError, match="Invalid ID"):
-        parser.parse(response)
+        # Act/Assert
+        with pytest.raises(NotAuthenticatedError, match="Not authenticated"):
+            client.parse(response)
 
+    def test_parse_raises_NotFoundIDError_when_status_code_404(self, client):
+        # Arrange
+        response = Mock(
+            status_code=404,
+            headers={"Content-Type": "application/json"},
+        )
+        response.json.return_value = {"error": {"message": "ID not found"}}
 
-def test_parse_raises_NotAuthenticatedError_when_status_code_401():
-    # Arrange
-    response = Mock(
-        status_code=401,
-        headers={"Content-Type": "application/json"},
-    )
-    response.json.return_value = {"error": {"message": "Not authenticated"}}
-    parser = BaseClient()
+        # Act/Assert
+        with pytest.raises(NotFoundIDError, match="ID not found"):
+            client.parse(response)
 
-    # Act/Assert
-    with pytest.raises(NotAuthenticatedError, match="Not authenticated"):
-        parser.parse(response)
+    def test_parse_raises_PermissionError_when_status_code_403(self, client):
+        # Arrange
+        response = Mock(
+            status_code=403,
+            headers={"Content-Type": "application/json"},
+        )
+        response.json.return_value = {"error": {"message": "Permission denied"}}
 
+        # Act/Assert
+        with pytest.raises(PermissionError, match="Permission denied"):
+            client.parse(response)
 
-def test_parse_raises_NotFoundIDError_when_status_code_404():
-    # Arrange
-    response = Mock(
-        status_code=404,
-        headers={"Content-Type": "application/json"},
-    )
-    response.json.return_value = {"error": {"message": "ID not found"}}
-    parser = BaseClient()
+    def test_parse_raises_UnknownError_when_status_code_is_not_handled(self, client):
+        # Arrange
+        response = Mock(
+            status_code=500,
+            headers={"Content-Type": "application/json"},
+        )
+        response.json.return_value = {"error": {"message": "Unknown error"}}
 
-    # Act/Assert
-    with pytest.raises(NotFoundIDError, match="ID not found"):
-        parser.parse(response)
-
-
-def test_parse_raises_PermissionError_when_status_code_403():
-    # Arrange
-    response = Mock(
-        status_code=403,
-        headers={"Content-Type": "application/json"},
-    )
-    response.json.return_value = {"error": {"message": "Permission denied"}}
-    parser = BaseClient()
-
-    # Act/Assert
-    with pytest.raises(PermissionError, match="Permission denied"):
-        parser.parse(response)
-
-
-def test_parse_raises_UnknownError_when_status_code_is_not_handled():
-    # Arrange
-    response = Mock(
-        status_code=500,
-        headers={"Content-Type": "application/json"},
-    )
-    response.json.return_value = {"error": {"message": "Unknown error"}}
-    parser = BaseClient()
-
-    # Act/Assert
-    with pytest.raises(UnknownError, match="Unknown error"):
-        parser.parse(response)
+        # Act/Assert
+        with pytest.raises(UnknownError, match="Unknown error"):
+            client.parse(response)
 
 
 # Add more test cases for other status codes and scenarios

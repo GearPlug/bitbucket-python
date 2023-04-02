@@ -12,6 +12,11 @@ from .exceptions import (
 class BaseClient(object):
     BASE_URL = "https://api.bitbucket.org/"
 
+    def __init__(self, user: str, password: str, owner: typing.Union[str, None] = None):
+        self.user = user
+        self.password = password
+        self.username = owner
+
     def parse(self, response) -> typing.Union[typing.Dict[str, typing.Any], None]:
         """
         Parses the response from the BitBucket API and returns the response data or raises an exception if the response

@@ -7,8 +7,6 @@ pip install bitbucket-python
 
 ## Usage
 
-### Sync client
-
 ```python
 from bitbucket.client import Client
 from bitbucket import AsyncClient
@@ -23,6 +21,8 @@ async with AsyncClient('EMAIL', 'PASSWORD') as client:
     ...
 
 ```
+
+### Methods
 
 Get user information
 ```
@@ -131,6 +131,21 @@ Delete webhook
 ```
 response = client.delete_webhook('REPOSITORY_SLUG', 'WEBHOOK_ID')
 ```
+
+### Helper methods
+
+### all_pages
+
+The `all_pages` method is a helper function that makes it easy to retrieve all items from an API methods that uses pagination (see https://developer.atlassian.com/cloud/bitbucket/rest/intro/#pagination).
+
+```python
+client = Client()
+
+items = list(client.all_pages(client.get_repositories))
+```
+
+Note that the `all_pages` method uses a generator to return the results.
+
 
 ## Requirements
 
