@@ -40,7 +40,7 @@ def test_parse_returns_none_when_status_code_204():
 def test_parse_raises_InvalidIDError_when_status_code_400():
     # Arrange
     response = Mock(status_code=400, headers={"Content-Type": "application/json"})
-    response.json.return_value = {"errorMessages": "Invalid ID"}
+    response.json.return_value = {"error": {"message": "Invalid ID"}}
 
     parser = BaseClient()
 
@@ -55,7 +55,7 @@ def test_parse_raises_NotAuthenticatedError_when_status_code_401():
         status_code=401,
         headers={"Content-Type": "application/json"},
     )
-    response.json.return_value = {"errorMessages": "Not authenticated"}
+    response.json.return_value = {"error": {"message": "Not authenticated"}}
     parser = BaseClient()
 
     # Act/Assert
@@ -69,7 +69,7 @@ def test_parse_raises_NotFoundIDError_when_status_code_404():
         status_code=404,
         headers={"Content-Type": "application/json"},
     )
-    response.json.return_value = {"errorMessages": "ID not found"}
+    response.json.return_value = {"error": {"message": "ID not found"}}
     parser = BaseClient()
 
     # Act/Assert
@@ -83,7 +83,7 @@ def test_parse_raises_PermissionError_when_status_code_403():
         status_code=403,
         headers={"Content-Type": "application/json"},
     )
-    response.json.return_value = {"errorMessages": "Permission denied"}
+    response.json.return_value = {"error": {"message": "Permission denied"}}
     parser = BaseClient()
 
     # Act/Assert
@@ -97,7 +97,7 @@ def test_parse_raises_UnknownError_when_status_code_is_not_handled():
         status_code=500,
         headers={"Content-Type": "application/json"},
     )
-    response.json.return_value = {"errorMessages": "Unknown error"}
+    response.json.return_value = {"error": {"message": "Unknown error"}}
     parser = BaseClient()
 
     # Act/Assert
