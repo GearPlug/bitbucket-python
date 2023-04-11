@@ -1,0 +1,39 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-python:
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Setup Poetry
+        uses: pronovic/setup-poetry@v1
+        with:
+          version: "1.4.1"
+          cache-venv: "true"
+          cache-poetry: "true"
+
+      - name: Install dependencies
+        run: |
+          poetry install --with dev
+
+      - name: Run tests
+        run: |
+          source ./.venv/bin/activate
+          pytest

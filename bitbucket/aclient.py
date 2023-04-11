@@ -1,3 +1,4 @@
+import typing
 import httpx
 
 from .base import BaseClient
@@ -20,11 +21,6 @@ class Client(BaseClient):
         print(response)
     ```
     """
-
-    def __init__(self, user, password, owner=None):
-        self.user = user
-        self.password = password
-        self.username = owner
 
     async def __aenter__(self):
         self._session = httpx.AsyncClient(
@@ -49,6 +45,52 @@ class Client(BaseClient):
         traceback,
     ) -> None:
         await self._session.aclose()
+
+    async def all_pages(
+        self,
+        method: typing.Callable[
+            ...,
+            typing.Awaitable[typing.Union[typing.Dict[str, typing.Any], None]],
+        ],
+        *args,
+        **kwargs
+    ) -> typing.AsyncGenerator[typing.Dict[str, typing.Any], None]:
+        """
+        Retrieves all pages from a BitBucket API list endpoint and yields a generator for the items in the
+        response.
+
+        Example:
+
+        ```python
+        async for item in client.all_pages(
+                client.get_issues,
+                "{726f1aab-826f-4c08-a127-1224347b3d09}"
+        ):
+            print(item["id"])
+        ```
+
+        Args:
+            method: A client class method to retrieve all pages from.
+            *args: Variable length argument list to be passed to the `method` callable.
+            **kwargs: Arbitrary keyword arguments to be passed to the `method` callable.
+
+        Returns:
+            An asynchronous generator that yields a dictionary of item data for each item in the response.
+
+        Raises:
+            Any exceptions raised by the `method` callable.
+        """
+        resp = await method(*args, **kwargs)
+        while True:
+            if resp is None:
+                break
+
+            for v in resp["values"]:
+                yield v
+
+            if "next" not in resp:
+                break
+            resp = await self._get(resp["next"])
 
     async def get_user(self, params=None):
         """
@@ -100,7 +142,7 @@ class Client(BaseClient):
         Creates a new repository.
 
         Example data:
-        ```
+        ```json
         {
             "scm": "git",
             "project": {
@@ -408,7 +450,10 @@ class Client(BaseClient):
         Returns:
             A dictionary containing the parsed response from the GET request.
         """
-        response = await self._session.get(self.BASE_URL + endpoint, params=params)
+        response = await self._session.get(
+            endpoint if endpoint.startswith("http") else self.BASE_URL + endpoint,
+            params=params,
+        )
         return self.parse(response)
 
     async def _post(self, endpoint, params=None, data=None):
