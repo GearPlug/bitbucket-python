@@ -440,7 +440,7 @@ class Client(BaseClient):
             )
         else:
             raise NotAuthenticatedError("Insufficient credentials")
-        return self._parse(response)
+        return self.parse(response)
 
     def _post(self, endpoint, params=None, data=None):
         if self.use_password:
@@ -458,7 +458,7 @@ class Client(BaseClient):
             )
         else:
             raise NotAuthenticatedError("Insufficient credentials")
-        return self._parse(response)
+        return self.parse(response)
 
     def _put(self, endpoint, params=None, data=None):
         if self.use_password:
@@ -476,7 +476,7 @@ class Client(BaseClient):
             )
         else:
             raise NotAuthenticatedError("Insufficient credentials")
-        return self._parse(response)
+        return self.parse(response)
 
     def _delete(self, endpoint, params=None):
         if self.use_password:
@@ -494,4 +494,4 @@ class Client(BaseClient):
             )
         else:
             raise NotAuthenticatedError("Insufficient credentials")
-        return self._parse(response)
+        return self.parse(response)

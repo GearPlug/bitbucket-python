@@ -28,7 +28,7 @@ class BaseClient(object):
         elif client_id and client_secret:
             token_req_payload = {'grant_type': 'client_credentials'}
             response = requests.post(self.TOKEN_URL, data=token_req_payload, allow_redirects=False, auth=(client_id, client_secret))
-            response = self._parse(response)
+            response = self.parse(response)
             self.token = response['access_token']
             self.use_token = True
 
