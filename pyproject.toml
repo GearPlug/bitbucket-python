@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bitbucket-python"
-version = "0.3.1"
+version = "0.3.2"
 description = "API wrapper for Bitbucket written in Python"
 authors = ["Miguel Ferrer <ingferrermiguel@gmail.com>"]
 license = "MIT"
