@@ -23,12 +23,21 @@ class Client(BaseClient):
     """
 
     async def __aenter__(self):
-        self._session = httpx.AsyncClient(
-            auth=(
-                self.user,
-                self.password,
+        if self.use_password:
+            self._session = httpx.AsyncClient(
+                auth=(
+                    self.user,
+                    self.password,
+                )
             )
-        )
+        elif self.use_token:
+            headers = {
+                "Accept": "application/json",
+                "Authorization": f"Bearer {self.token}"
+            }
+            self._session = httpx.AsyncClient(
+                headers=headers
+            )
 
         user_data = await self.get_user()
 

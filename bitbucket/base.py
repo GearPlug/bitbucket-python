@@ -1,4 +1,5 @@
 import typing
+import requests
 
 from .exceptions import (
     InvalidIDError,
@@ -11,11 +12,28 @@ from .exceptions import (
 
 class BaseClient(object):
     BASE_URL = "https://api.bitbucket.org/"
+    TOKEN_URL = 'https://bitbucket.org/site/oauth2/access_token'
 
-    def __init__(self, user: str, password: str, owner: typing.Union[str, None] = None):
+    def __init__(self, user: str=None, password: str=None,token: str=None,client_id: str=None, client_secret: str=None, owner: typing.Union[str, None] = None):
         self.user = user
         self.password = password
         self.username = owner
+        self.use_password = False
+        self.use_token = False
+        if user and password:
+            self.use_password = True
+        self.token = token
+        if token:
+            self.use_token = True
+        elif client_id and client_secret:
+            token_req_payload = {'grant_type': 'client_credentials'}
+            response = requests.post(self.TOKEN_URL, data=token_req_payload, allow_redirects=False, auth=(client_id, client_secret))
+            response = self.parse(response)
+            self.token = response['access_token']
+            self.use_token = True
+
+        if not (self.use_password or self.token):
+            raise NotAuthenticatedError("Insufficient credentials")
 
     def parse(self, response) -> typing.Union[typing.Dict[str, typing.Any], None]:
         """

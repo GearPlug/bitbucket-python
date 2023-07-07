@@ -2,10 +2,10 @@ import typing
 import requests
 
 from .base import BaseClient
-
+from .exceptions import NotAuthenticatedError
 
 class Client(BaseClient):
-    def __init__(self, user, password, owner=None):
+    def __init__(self, user=None, password=None, token=None, client_id=None, client_secret=None, owner=None):
         """Initial session with user/password, and setup repository owner
 
         Args:
@@ -14,7 +14,7 @@ class Client(BaseClient):
         Returns:
 
         """
-        super().__init__(user, password, owner)
+        super().__init__(user, password,token,client_id,client_secret, owner)
 
         # for shared repo, set baseURL to owner
         if owner is None:
@@ -424,34 +424,74 @@ class Client(BaseClient):
             params=params,
         )
 
-    def _get(self, endpoint: str, params=None):
-        response = requests.get(
-            endpoint if endpoint.startswith("http") else self.BASE_URL + endpoint,
-            params=params,
-            auth=(self.user, self.password),
-        )
+    def _get(self, endpoint, params=None):
+        if self.use_password:
+            response = requests.get(self.BASE_URL + endpoint, params=params, auth=(self.user, self.password))
+        elif self.use_token:
+            headers = {
+                "Accept": "application/json",
+                "Authorization": f"Bearer {self.token}"
+            }
+            response = requests.request(
+                "GET",
+                self.BASE_URL + endpoint,
+                params=params,
+                headers=headers
+            )
+        else:
+            raise NotAuthenticatedError("Insufficient credentials")
         return self.parse(response)
 
     def _post(self, endpoint, params=None, data=None):
-        response = requests.post(
-            self.BASE_URL + endpoint,
-            params=params,
-            json=data,
-            auth=(self.user, self.password),
-        )
+        if self.use_password:
+            response = requests.post(self.BASE_URL + endpoint, params=params, json=data, auth=(self.user, self.password))
+        elif self.use_token:
+            headers = {
+                "Accept": "application/json",
+                "Authorization": f"Bearer {self.token}"
+            }
+            response = requests.request(
+                "POST",
+                self.BASE_URL + endpoint,
+                params=params, json=data,
+                headers=headers
+            )
+        else:
+            raise NotAuthenticatedError("Insufficient credentials")
         return self.parse(response)
 
     def _put(self, endpoint, params=None, data=None):
-        response = requests.put(
-            self.BASE_URL + endpoint,
-            params=params,
-            json=data,
-            auth=(self.user, self.password),
-        )
+        if self.use_password:
+            response = requests.put(self.BASE_URL + endpoint, params=params, json=data, auth=(self.user, self.password))
+        elif self.use_token:
+            headers = {
+                "Accept": "application/json",
+                "Authorization": f"Bearer {self.token}"
+            }
+            response = requests.request(
+                "PUT",
+                self.BASE_URL + endpoint,
+                params=params, json=data,
+                headers=headers
+            )
+        else:
+            raise NotAuthenticatedError("Insufficient credentials")
         return self.parse(response)
 
     def _delete(self, endpoint, params=None):
-        response = requests.delete(
-            self.BASE_URL + endpoint, params=params, auth=(self.user, self.password)
-        )
+        if self.use_password:
+            response = requests.delete(self.BASE_URL + endpoint, params=params, auth=(self.user, self.password))
+        elif self.use_token:
+            headers = {
+                "Accept": "application/json",
+                "Authorization": f"Bearer {self.token}"
+            }
+            response = requests.request(
+                "DELETE",
+                self.BASE_URL + endpoint,
+                params=params,
+                headers=headers
+            )
+        else:
+            raise NotAuthenticatedError("Insufficient credentials")
         return self.parse(response)
